@@ -33,10 +33,14 @@ data-field="monthlyIncome"
 data-field="essentialExpenses"
 data-field="extraDebtPayment"
 data-field="strategy"
+data-expense-item
 data-debt-list
 data-debt-row
+data-action="useExpenseBreakdown"
+data-action="useSuggestedExtra"
 data-output="totalDebt"
 data-output="debtCommitmentRatio"
+data-output="expenseBreakdownTotal"
 data-output="payoffTime"
 data-output="interestPaid"
 data-output="healthScore"

@@ -24,16 +24,82 @@
             <label>
               Monthly take-home income
               <input data-field="monthlyIncome" type="number" min="0" value="4500" />
+              <small>After EPF, SOCSO, PCB, and payroll deductions.</small>
             </label>
             <label>
               Essential monthly expenses
               <input data-field="essentialExpenses" type="number" min="0" value="1500" />
+              <small>Non-debt expenses only. Do not include debt payments listed below.</small>
             </label>
             <label>
               Extra amount for debt payoff
               <input data-field="extraDebtPayment" type="number" min="0" value="500" />
+              <small>Extra amount on top of all required minimum debt payments.</small>
             </label>
           </div>
+
+          <details class="breakdown-box">
+            <summary>Optional expense breakdown</summary>
+            <p>
+              Use this if users are not sure what to enter for essential monthly
+              expenses. These fields should exclude debt payments.
+            </p>
+            <div class="field-grid">
+              <label>
+                Rent / parents' house
+                <input data-expense-item type="number" min="0" value="700" />
+              </label>
+              <label>
+                Food and groceries
+                <input data-expense-item type="number" min="0" value="650" />
+              </label>
+              <label>
+                Petrol / toll / transport
+                <input data-expense-item type="number" min="0" value="300" />
+              </label>
+              <label>
+                Utilities
+                <input data-expense-item type="number" min="0" value="120" />
+              </label>
+              <label>
+                Phone / internet
+                <input data-expense-item type="number" min="0" value="100" />
+              </label>
+              <label>
+                Insurance / medical
+                <input data-expense-item type="number" min="0" value="160" />
+              </label>
+              <label>
+                Family support
+                <input data-expense-item type="number" min="0" value="0" />
+              </label>
+              <label>
+                Subscriptions / other
+                <input data-expense-item type="number" min="0" value="70" />
+              </label>
+            </div>
+            <p>
+              Breakdown total: <strong data-output="expenseBreakdownTotal">RM 0</strong>
+            </p>
+            <button type="button" data-action="useExpenseBreakdown">
+              Use breakdown total as expenses
+            </button>
+          </details>
+
+          <section class="cashflow-box">
+            <h3>Extra repayment guidance</h3>
+            <p>
+              Available after expenses and minimum debt payments:
+              <strong data-output="availableAfterMinimums">RM 0</strong>
+            </p>
+            <p>
+              Suggested extra amount for debt payoff:
+              <strong data-output="suggestedExtraPayment">RM 0</strong>
+            </p>
+            <button type="button" data-action="useSuggestedExtra">
+              Use suggested amount
+            </button>
+          </section>
 
           <div class="strategy-options" aria-label="Payoff strategy">
             <label>
@@ -148,11 +214,6 @@
             <h3 data-output="statusLabel">Status</h3>
             <p data-output="statusCopy"></p>
             <p data-output="diagnosis"></p>
-          </section>
-
-          <section>
-            <h3>Available after expenses and minimum debt payments</h3>
-            <p data-output="availableAfterMinimums">RM 0</p>
           </section>
 
           <section>

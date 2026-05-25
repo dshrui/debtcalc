@@ -65,6 +65,12 @@ Non-debt expenses only. Include rent, food, petrol, toll, utilities, phone, insu
 Extra amount for debt payoff:
 The amount the user can pay on top of all required minimum debt payments.
 
+The UI should not force users to guess the extra debt payoff amount. It should first show:
+
+- cash available after essential expenses and minimum debt payments;
+- suggested safe extra debt payment;
+- an option to apply the suggested amount.
+
 ### Step 2 - Debt Inventory
 
 The user enters each active debt.
@@ -388,6 +394,15 @@ The total of the breakdown should populate `essentialExpenses`.
 
 Do not force the user to complete the breakdown. It should help users who are unsure what to fill in.
 
+Recommended implementation hooks:
+
+```html
+data-expense-item
+data-output="expenseBreakdownTotal"
+data-action="useExpenseBreakdown"
+data-action="useSuggestedExtra"
+```
+
 ## Handoff Contract For UI/UX Partner
 
 The UI/UX partner can redesign the full interface.
@@ -399,12 +414,16 @@ data-debt-calculator
 data-field="monthlyIncome"
 data-field="essentialExpenses"
 data-field="extraDebtPayment"
+data-expense-item
 data-field="strategy"
 data-debt-list
 data-debt-row
+data-action="useExpenseBreakdown"
+data-action="useSuggestedExtra"
 data-output="totalDebt"
 data-output="minimumPaymentTotal"
 data-output="debtCommitmentRatio"
+data-output="expenseBreakdownTotal"
 data-output="availableAfterMinimums"
 data-output="suggestedExtraPayment"
 data-output="payoffTime"
@@ -441,4 +460,3 @@ When the architecture is approved:
 5. Give partner the architecture, required fields, required outputs, and skeleton markup.
 6. Partner designs the final UI in Figma or directly in HTML/CSS.
 7. Final design is implemented while preserving the data contract.
-

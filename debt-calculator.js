@@ -9,6 +9,13 @@ const rowsEl = document.querySelector("#debt-rows");
 const formEl = document.querySelector("#calculator-form");
 const addDebtButton = document.querySelector("#add-debt");
 const resetButton = document.querySelector("#reset-demo");
+const expenseInputs = Array.from(document.querySelectorAll("[data-expense-item]"));
+const expenseBreakdownTotalEl = document.querySelector("#expense-breakdown-total");
+const useExpenseBreakdownButton = document.querySelector("#use-expense-breakdown");
+const availableAfterMinimumsEl = document.querySelector("#available-after-minimums");
+const suggestedExtraPaymentEl = document.querySelector("#suggested-extra-payment");
+const extraPaymentGuidanceEl = document.querySelector("#extra-payment-guidance");
+const useSuggestedExtraButton = document.querySelector("#use-suggested-extra");
 const scoreEl = document.querySelector("#health-score");
 const scoreRingEl = document.querySelector(".score-ring");
 const statusLineEl = document.querySelector("#status-line");
@@ -49,6 +56,19 @@ function formatMonths(months, stalled) {
 function numberValue(selector) {
   const value = Number(document.querySelector(selector).value);
   return Number.isFinite(value) ? Math.max(value, 0) : 0;
+}
+
+function numberFromInput(input) {
+  const value = Number(input.value);
+  return Number.isFinite(value) ? Math.max(value, 0) : 0;
+}
+
+function expenseBreakdownTotal() {
+  return expenseInputs.reduce((sum, input) => sum + numberFromInput(input), 0);
+}
+
+function updateExpenseBreakdownTotal() {
+  expenseBreakdownTotalEl.textContent = formatRM(expenseBreakdownTotal());
 }
 
 function strategyValue() {
@@ -308,7 +328,9 @@ function updateCalculator() {
     .filter((debt) => debt.rate >= 12)
     .reduce((sum, debt) => sum + debt.balance, 0);
   const dti = income > 0 ? minPayments / income : 0;
-  const breathingRoom = income - expenses - minPayments - extraPayment;
+  const availableAfterMinimums = income - expenses - minPayments;
+  const suggestedExtraPayment = Math.max(0, Math.floor((availableAfterMinimums * 0.7) / 10) * 10);
+  const breathingRoom = availableAfterMinimums - extraPayment;
   const payoff = simulatePayoff(activeDebts, strategy, extraPayment);
   const score = calculateScore({
     income,
@@ -330,6 +352,23 @@ function updateCalculator() {
   dtiEl.textContent = income > 0 ? `${Math.round(dti * 100)}%` : "0%";
   payoffMonthsEl.textContent = formatMonths(payoff.months, payoff.stalled);
   interestPaidEl.textContent = payoff.stalled ? "Review needed" : formatRM(payoff.totalInterest);
+  availableAfterMinimumsEl.textContent = formatRM(availableAfterMinimums);
+  suggestedExtraPaymentEl.textContent = formatRM(suggestedExtraPayment);
+  document.querySelector(".extra-guidance").classList.toggle("warning", availableAfterMinimums >= 0 && breathingRoom < 0);
+  document.querySelector(".extra-guidance").classList.toggle("danger", availableAfterMinimums < 0);
+  if (availableAfterMinimums < 0) {
+    extraPaymentGuidanceEl.textContent =
+      "Your essentials and minimum debt payments are already higher than your take-home income. Do not force extra repayment until the monthly gap is addressed.";
+  } else if (extraPayment > availableAfterMinimums) {
+    extraPaymentGuidanceEl.textContent =
+      "Your extra payment is higher than the cash available after essentials and minimum debt payments. Reduce it or review your expenses.";
+  } else if (extraPayment === 0) {
+    extraPaymentGuidanceEl.textContent =
+      "You can leave extra repayment at RM0, or use the suggested amount if you want a faster payoff while keeping some buffer.";
+  } else {
+    extraPaymentGuidanceEl.textContent =
+      "Minimum debt payments are pulled from the debt list below. The suggested amount keeps around 30% of available cash as buffer.";
+  }
   diagnosisEl.textContent = buildDiagnosis({
     dti,
     breathingRoom,
@@ -341,9 +380,10 @@ function updateCalculator() {
   breathingRoomEl.textContent = formatRM(breathingRoom);
   breathingCopyEl.textContent =
     breathingRoom >= 0
-      ? "Estimated cash left after living costs, minimum debt payments, and planned extra payment."
+      ? "Estimated cash left after essential expenses, minimum debt payments, and planned extra payment."
       : "This plan is not affordable yet. Reduce the extra payment, cut fixed costs, or seek repayment support.";
 
+  updateExpenseBreakdownTotal();
   updatePriorityList(activeDebts, strategy);
   updateBars(payoff.snapshots, totalDebt);
 }
@@ -379,11 +419,33 @@ rowsEl.addEventListener("click", (event) => {
 
 addDebtButton.addEventListener("click", addDebt);
 
+useExpenseBreakdownButton.addEventListener("click", () => {
+  document.querySelector("#monthly-expenses").value = expenseBreakdownTotal();
+  updateCalculator();
+});
+
+useSuggestedExtraButton.addEventListener("click", () => {
+  const income = numberValue("#monthly-income");
+  const expenses = numberValue("#monthly-expenses");
+  const minPayments = debts
+    .filter((debt) => debt.balance > 0 && debt.minPayment > 0)
+    .reduce((sum, debt) => sum + debt.minPayment, 0);
+  const availableAfterMinimums = income - expenses - minPayments;
+  document.querySelector("#extra-payment").value = Math.max(
+    0,
+    Math.floor((availableAfterMinimums * 0.7) / 10) * 10,
+  );
+  updateCalculator();
+});
+
 resetButton.addEventListener("click", () => {
   debts = demoDebts.map((debt) => ({ ...debt, id: crypto.randomUUID() }));
   document.querySelector("#monthly-income").value = 4200;
   document.querySelector("#monthly-expenses").value = 2100;
   document.querySelector("#extra-payment").value = 350;
+  [700, 650, 300, 120, 100, 160, 0, 70].forEach((value, index) => {
+    if (expenseInputs[index]) expenseInputs[index].value = value;
+  });
   document.querySelector('input[name="strategy"][value="avalanche"]').checked = true;
   renderRows();
   updateCalculator();

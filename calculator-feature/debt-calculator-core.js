@@ -208,7 +208,10 @@
       .filter((debt) => debt.annualRate >= 12)
       .reduce((sum, debt) => sum + debt.balance, 0);
     const availableAfterMinimums = monthlyIncome - essentialExpenses - minimumPaymentTotal;
-    const suggestedExtraPayment = Math.max(0, Math.floor(availableAfterMinimums * 0.7));
+    const suggestedExtraPayment = Math.max(
+      0,
+      Math.floor((availableAfterMinimums * 0.7) / 10) * 10,
+    );
     const payoff = simulatePayoff(debts, strategy, extraDebtPayment);
     const debtCommitmentRatio = monthlyIncome > 0 ? minimumPaymentTotal / monthlyIncome : 0;
     const healthScore = calculateHealthScore({
@@ -263,4 +266,3 @@
 
   global.MIDDebtCalculator = api;
 })(typeof window !== "undefined" ? window : globalThis);
-

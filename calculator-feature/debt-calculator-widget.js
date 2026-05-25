@@ -38,6 +38,18 @@
     return Number.isFinite(value) ? Math.max(value, 0) : 0;
   }
 
+  function numberFromInput(input) {
+    const value = Number(input.value);
+    return Number.isFinite(value) ? Math.max(value, 0) : 0;
+  }
+
+  function expenseBreakdownTotal(root) {
+    return Array.from(root.querySelectorAll("[data-expense-item]")).reduce(
+      (sum, input) => sum + numberFromInput(input),
+      0,
+    );
+  }
+
   function textValue(root, selector, fallback) {
     const element = root.querySelector(selector);
     return element && element.value ? element.value.trim() : fallback;
@@ -108,6 +120,7 @@
     setOutput(root, "totalDebt", money(result.metrics.totalDebt));
     setOutput(root, "minimumPaymentTotal", money(result.metrics.minimumPaymentTotal));
     setOutput(root, "debtCommitmentRatio", percentage(result.metrics.debtCommitmentRatio));
+    setOutput(root, "expenseBreakdownTotal", money(expenseBreakdownTotal(root)));
     setOutput(root, "availableAfterMinimums", money(result.metrics.availableAfterMinimums));
     setOutput(root, "suggestedExtraPayment", money(result.metrics.suggestedExtraPayment));
     setOutput(root, "payoffTime", payoffTime(result.metrics.payoffMonths, result.payoff.stalled));
@@ -145,6 +158,25 @@
         render(root);
       }
 
+      if (event.target.closest("[data-action='useExpenseBreakdown']")) {
+        const field = root.querySelector('[data-field="essentialExpenses"]');
+        if (field) field.value = expenseBreakdownTotal(root);
+        render(root);
+      }
+
+      if (event.target.closest("[data-action='useSuggestedExtra']")) {
+        const result = calculator.calculateDebtPlan({
+          monthlyIncome: numberValue(root, '[data-field="monthlyIncome"]'),
+          essentialExpenses: numberValue(root, '[data-field="essentialExpenses"]'),
+          extraDebtPayment: numberValue(root, '[data-field="extraDebtPayment"]'),
+          strategy: getStrategy(root),
+          debts: getDebts(root),
+        });
+        const field = root.querySelector('[data-field="extraDebtPayment"]');
+        if (field) field.value = result.metrics.suggestedExtraPayment;
+        render(root);
+      }
+
       if (removeButton) {
         removeButton.closest("[data-debt-row]")?.remove();
         render(root);
@@ -158,4 +190,3 @@
     document.querySelectorAll("[data-debt-calculator]").forEach(bind);
   });
 })(window);
-

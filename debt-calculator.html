@@ -63,27 +63,147 @@
             <form class="calculator-form" id="calculator-form">
               <div class="field-grid three-columns">
                 <label>
-                  <span>Monthly income</span>
+                  <span>Monthly take-home income</span>
                   <div class="money-field">
                     <span>RM</span>
-                    <input id="monthly-income" type="number" min="0" step="50" value="4200" />
+                    <input
+                      id="monthly-income"
+                      type="number"
+                      min="0"
+                      step="50"
+                      value="4200"
+                      aria-describedby="income-help"
+                    />
                   </div>
+                  <small id="income-help">After EPF, SOCSO, PCB, and payroll deductions.</small>
                 </label>
                 <label>
-                  <span>Fixed living costs</span>
+                  <span>Essential monthly expenses</span>
                   <div class="money-field">
                     <span>RM</span>
-                    <input id="monthly-expenses" type="number" min="0" step="50" value="2100" />
+                    <input
+                      id="monthly-expenses"
+                      type="number"
+                      min="0"
+                      step="50"
+                      value="2100"
+                      aria-describedby="expenses-help"
+                    />
                   </div>
+                  <small id="expenses-help">Non-debt costs only. Do not include debts listed below.</small>
                 </label>
                 <label>
-                  <span>Extra debt payment</span>
+                  <span>Extra amount for debt payoff</span>
                   <div class="money-field">
                     <span>RM</span>
-                    <input id="extra-payment" type="number" min="0" step="25" value="350" />
+                    <input
+                      id="extra-payment"
+                      type="number"
+                      min="0"
+                      step="25"
+                      value="350"
+                      aria-describedby="extra-payment-help"
+                    />
                   </div>
+                  <small id="extra-payment-help">Extra amount on top of all minimum debt payments.</small>
                 </label>
               </div>
+
+              <details class="expense-breakdown">
+                <summary>
+                  <span>Not sure what to put for essential expenses?</span>
+                  <strong>Open breakdown</strong>
+                </summary>
+                <p>
+                  Use this optional breakdown for non-debt expenses only. Credit card,
+                  personal loan, BNPL, PTPTN, and other debt payments should stay in the
+                  debt list below.
+                </p>
+                <div class="expense-grid">
+                  <label>
+                    <span>Rent / parents' house</span>
+                    <div class="money-field">
+                      <span>RM</span>
+                      <input data-expense-item type="number" min="0" step="10" value="700" />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Food and groceries</span>
+                    <div class="money-field">
+                      <span>RM</span>
+                      <input data-expense-item type="number" min="0" step="10" value="650" />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Petrol / toll / transport</span>
+                    <div class="money-field">
+                      <span>RM</span>
+                      <input data-expense-item type="number" min="0" step="10" value="300" />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Utilities</span>
+                    <div class="money-field">
+                      <span>RM</span>
+                      <input data-expense-item type="number" min="0" step="10" value="120" />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Phone / internet</span>
+                    <div class="money-field">
+                      <span>RM</span>
+                      <input data-expense-item type="number" min="0" step="10" value="100" />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Insurance / medical</span>
+                    <div class="money-field">
+                      <span>RM</span>
+                      <input data-expense-item type="number" min="0" step="10" value="160" />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Family support</span>
+                    <div class="money-field">
+                      <span>RM</span>
+                      <input data-expense-item type="number" min="0" step="10" value="0" />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Subscriptions / other</span>
+                    <div class="money-field">
+                      <span>RM</span>
+                      <input data-expense-item type="number" min="0" step="10" value="70" />
+                    </div>
+                  </label>
+                </div>
+                <div class="breakdown-footer">
+                  <div>
+                    <span>Breakdown total</span>
+                    <strong id="expense-breakdown-total">RM0</strong>
+                  </div>
+                  <button class="secondary-button" type="button" id="use-expense-breakdown">
+                    Use this as expenses
+                  </button>
+                </div>
+              </details>
+
+              <section class="extra-guidance" aria-label="Extra repayment guidance">
+                <div>
+                  <span>Available after expenses and minimum debt payments</span>
+                  <strong id="available-after-minimums">RM0</strong>
+                </div>
+                <div>
+                  <span>Suggested safe extra debt payment</span>
+                  <strong id="suggested-extra-payment">RM0</strong>
+                </div>
+                <p id="extra-payment-guidance">
+                  Minimum debt payments are calculated from the debt list below.
+                </p>
+                <button class="secondary-button" type="button" id="use-suggested-extra">
+                  Use suggested amount
+                </button>
+              </section>
 
               <fieldset class="strategy-fieldset">
                 <legend>Payoff strategy</legend>

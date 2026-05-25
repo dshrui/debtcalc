@@ -257,6 +257,14 @@ label {
   font-weight: 800;
 }
 
+label small {
+  min-height: 34px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+
 .money-field,
 .table-input,
 .rate-field {
@@ -290,6 +298,124 @@ input {
 .rate-field input {
   padding: 11px 12px 11px 8px;
   font-weight: 800;
+}
+
+.expense-breakdown,
+.extra-guidance {
+  border: 1px solid rgba(17, 19, 24, 0.1);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.expense-breakdown {
+  overflow: hidden;
+}
+
+.expense-breakdown summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  list-style: none;
+}
+
+.expense-breakdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.expense-breakdown summary strong {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--blue);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.expense-breakdown[open] summary {
+  border-bottom: 1px solid rgba(17, 19, 24, 0.08);
+}
+
+.expense-breakdown p {
+  margin: 14px 16px 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.expense-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 16px;
+}
+
+.expense-grid label {
+  gap: 6px;
+  font-size: 12px;
+}
+
+.breakdown-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-top: 1px solid rgba(17, 19, 24, 0.08);
+  background: rgba(244, 211, 94, 0.14);
+}
+
+.breakdown-footer div,
+.extra-guidance div {
+  display: grid;
+  gap: 4px;
+}
+
+.breakdown-footer span,
+.extra-guidance span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.breakdown-footer strong,
+.extra-guidance strong {
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 950;
+}
+
+.extra-guidance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  background: var(--blue-soft);
+}
+
+.extra-guidance p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.extra-guidance.warning {
+  background: #fff4d3;
+}
+
+.extra-guidance.danger {
+  background: var(--red-soft);
 }
 
 .strategy-fieldset {
@@ -693,9 +819,20 @@ input {
   }
 
   .three-columns,
+  .expense-grid,
   .segmented-control,
   .metric-grid,
   .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .expense-breakdown summary,
+  .breakdown-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .extra-guidance {
     grid-template-columns: 1fr;
   }
 
