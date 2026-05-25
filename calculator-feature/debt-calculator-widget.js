@@ -59,6 +59,10 @@
     return root.querySelector('[data-field="strategy"]:checked')?.value || "avalanche";
   }
 
+  function getRepaymentMode(root) {
+    return root.querySelector('[data-field="repaymentMode"]:checked')?.value || "balanced";
+  }
+
   function getDebts(root) {
     return Array.from(root.querySelectorAll("[data-debt-row]")).map((row, index) => ({
       id: row.dataset.debtId || `debt-${index + 1}`,
@@ -108,13 +112,35 @@
     });
   }
 
+  function renderRepaymentOptions(root, options) {
+    ["conservative", "balanced", "aggressive"].forEach((key) => {
+      setOutput(root, `${key}Extra`, money(options[key].extraPayment));
+      setOutput(root, `${key}Buffer`, money(options[key].buffer));
+    });
+  }
+
   function render(root) {
-    const result = calculator.calculateDebtPlan({
+    const baseInput = {
       monthlyIncome: numberValue(root, '[data-field="monthlyIncome"]'),
       essentialExpenses: numberValue(root, '[data-field="essentialExpenses"]'),
       extraDebtPayment: numberValue(root, '[data-field="extraDebtPayment"]'),
       strategy: getStrategy(root),
       debts: getDebts(root),
+    };
+
+    const baseResult = calculator.calculateDebtPlan(baseInput);
+    const repaymentMode = getRepaymentMode(root);
+    let extraDebtPayment = baseInput.extraDebtPayment;
+
+    if (repaymentMode !== "custom") {
+      extraDebtPayment = baseResult.metrics.repaymentOptions[repaymentMode].extraPayment;
+      const field = root.querySelector('[data-field="extraDebtPayment"]');
+      if (field) field.value = extraDebtPayment;
+    }
+
+    const result = calculator.calculateDebtPlan({
+      ...baseInput,
+      extraDebtPayment,
     });
 
     setOutput(root, "totalDebt", money(result.metrics.totalDebt));
@@ -131,6 +157,7 @@
     setOutput(root, "diagnosis", result.diagnosis);
 
     root.dataset.status = result.status.level;
+    renderRepaymentOptions(root, result.metrics.repaymentOptions);
     renderPriorityList(root, result.priorityOrder);
     renderSnapshots(root, result);
   }
@@ -147,7 +174,13 @@
   }
 
   function bind(root) {
-    root.addEventListener("input", () => render(root));
+    root.addEventListener("input", (event) => {
+      if (event.target.matches('[data-field="extraDebtPayment"]')) {
+        const custom = root.querySelector('[data-field="repaymentMode"][value="custom"]');
+        if (custom) custom.checked = true;
+      }
+      render(root);
+    });
     root.addEventListener("change", () => render(root));
     root.addEventListener("click", (event) => {
       const addButton = event.target.closest("[data-action='addDebt']");
@@ -165,6 +198,8 @@
       }
 
       if (event.target.closest("[data-action='useSuggestedExtra']")) {
+        const balanced = root.querySelector('[data-field="repaymentMode"][value="balanced"]');
+        if (balanced) balanced.checked = true;
         const result = calculator.calculateDebtPlan({
           monthlyIncome: numberValue(root, '[data-field="monthlyIncome"]'),
           essentialExpenses: numberValue(root, '[data-field="essentialExpenses"]'),

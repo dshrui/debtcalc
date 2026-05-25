@@ -68,8 +68,8 @@ The amount the user can pay on top of all required minimum debt payments.
 The UI should not force users to guess the extra debt payoff amount. It should first show:
 
 - cash available after essential expenses and minimum debt payments;
-- suggested safe extra debt payment;
-- an option to apply the suggested amount.
+- conservative, balanced, and aggressive repayment options;
+- the monthly buffer left after each option.
 
 ### Step 2 - Debt Inventory
 
@@ -124,7 +124,7 @@ The calculator produces:
 - Total minimum monthly debt payment
 - Debt commitment ratio
 - Available cash after essential expenses and minimum payments
-- Suggested extra debt payment
+- Repayment comfort options
 - Debt health score
 - Status label
 - Payoff time estimate
@@ -179,7 +179,12 @@ Examples:
     minimumPaymentTotal: 940,
     debtCommitmentRatio: 0.21,
     availableAfterMinimums: 2060,
-    suggestedExtraPayment: 1442,
+    suggestedExtraPayment: 1030,
+    repaymentOptions: {
+      conservative: { extraPayment: 610, buffer: 1450 },
+      balanced: { extraPayment: 1030, buffer: 1030 },
+      aggressive: { extraPayment: 1440, buffer: 620 }
+    },
     payoffMonths: 18,
     interestPaid: 1620,
     healthScore: 67
@@ -233,15 +238,17 @@ monthly take-home income - essential monthly expenses - total minimum debt payme
 
 This tells the user how much monthly breathing room exists before choosing any extra debt payoff amount.
 
-### Suggested Extra Payment
+### Repayment Comfort Options
 
-Current skeleton logic:
+The user should not need to guess an extra repayment amount. The calculator should show three comfort options:
 
-```txt
-70% of available cash after expenses and minimum debt payments
-```
+| Mode | Logic | Purpose |
+|---|---:|---|
+| Conservative | 30% of available cash | Slower payoff, more monthly buffer |
+| Balanced | 50% of available cash | Default middle path |
+| Aggressive | 70% of available cash | Faster payoff, less monthly buffer |
 
-This keeps a small buffer instead of assuming the user should use every remaining ringgit.
+The selected option fills the extra debt payoff amount. Users can still choose a custom amount if they already know what they want to pay.
 
 This is a practical estimate, not a strict financial rule.
 
@@ -358,7 +365,7 @@ The final UI should include:
 4. Debt list
 5. Strategy selector
 6. Available cash after minimum payments
-7. Suggested extra payment
+7. Repayment comfort options
 8. Debt health score
 9. Payoff estimate
 10. Priority order
@@ -400,7 +407,13 @@ Recommended implementation hooks:
 data-expense-item
 data-output="expenseBreakdownTotal"
 data-action="useExpenseBreakdown"
-data-action="useSuggestedExtra"
+data-field="repaymentMode"
+data-output="conservativeExtra"
+data-output="conservativeBuffer"
+data-output="balancedExtra"
+data-output="balancedBuffer"
+data-output="aggressiveExtra"
+data-output="aggressiveBuffer"
 ```
 
 ## Handoff Contract For UI/UX Partner
@@ -415,17 +428,23 @@ data-field="monthlyIncome"
 data-field="essentialExpenses"
 data-field="extraDebtPayment"
 data-expense-item
+data-field="repaymentMode"
 data-field="strategy"
 data-debt-list
 data-debt-row
 data-action="useExpenseBreakdown"
-data-action="useSuggestedExtra"
 data-output="totalDebt"
 data-output="minimumPaymentTotal"
 data-output="debtCommitmentRatio"
 data-output="expenseBreakdownTotal"
 data-output="availableAfterMinimums"
 data-output="suggestedExtraPayment"
+data-output="conservativeExtra"
+data-output="conservativeBuffer"
+data-output="balancedExtra"
+data-output="balancedBuffer"
+data-output="aggressiveExtra"
+data-output="aggressiveBuffer"
 data-output="payoffTime"
 data-output="interestPaid"
 data-output="healthScore"

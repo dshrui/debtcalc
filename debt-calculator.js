@@ -13,9 +13,9 @@ const expenseInputs = Array.from(document.querySelectorAll("[data-expense-item]"
 const expenseBreakdownTotalEl = document.querySelector("#expense-breakdown-total");
 const useExpenseBreakdownButton = document.querySelector("#use-expense-breakdown");
 const availableAfterMinimumsEl = document.querySelector("#available-after-minimums");
-const suggestedExtraPaymentEl = document.querySelector("#suggested-extra-payment");
+const selectedExtraPaymentEl = document.querySelector("#selected-extra-payment");
 const extraPaymentGuidanceEl = document.querySelector("#extra-payment-guidance");
-const useSuggestedExtraButton = document.querySelector("#use-suggested-extra");
+const extraGuidanceEl = document.querySelector(".extra-guidance");
 const scoreEl = document.querySelector("#health-score");
 const scoreRingEl = document.querySelector(".score-ring");
 const statusLineEl = document.querySelector("#status-line");
@@ -73,6 +73,46 @@ function updateExpenseBreakdownTotal() {
 
 function strategyValue() {
   return document.querySelector('input[name="strategy"]:checked')?.value ?? "avalanche";
+}
+
+function repaymentModeValue() {
+  return document.querySelector('input[name="repayment-mode"]:checked')?.value ?? "balanced";
+}
+
+function roundedExtra(value) {
+  return Math.max(0, Math.floor(value / 10) * 10);
+}
+
+function repaymentOptions(availableAfterMinimums) {
+  const available = Math.max(0, availableAfterMinimums);
+  return {
+    conservative: {
+      extra: roundedExtra(available * 0.3),
+      label: "keeps bigger buffer",
+    },
+    balanced: {
+      extra: roundedExtra(available * 0.5),
+      label: "keeps half as buffer",
+    },
+    aggressive: {
+      extra: roundedExtra(available * 0.7),
+      label: "fastest, less buffer",
+    },
+  };
+}
+
+function updateComfortOptions(options, availableAfterMinimums) {
+  const available = Math.max(0, availableAfterMinimums);
+  [
+    ["conservative", "Conservative"],
+    ["balanced", "Balanced"],
+    ["aggressive", "Aggressive"],
+  ].forEach(([key]) => {
+    const extra = options[key].extra;
+    const buffer = Math.max(0, available - extra);
+    document.querySelector(`#${key}-extra`).textContent = `${formatRM(extra)} extra`;
+    document.querySelector(`#${key}-buffer`).textContent = `${formatRM(buffer)} buffer left`;
+  });
 }
 
 function renderRows() {
@@ -319,8 +359,8 @@ function updateBars(snapshots, initialBalance) {
 function updateCalculator() {
   const income = numberValue("#monthly-income");
   const expenses = numberValue("#monthly-expenses");
-  const extraPayment = numberValue("#extra-payment");
   const strategy = strategyValue();
+  const repaymentMode = repaymentModeValue();
   const activeDebts = debts.filter((debt) => debt.balance > 0 && debt.minPayment > 0);
   const totalDebt = activeDebts.reduce((sum, debt) => sum + debt.balance, 0);
   const minPayments = activeDebts.reduce((sum, debt) => sum + debt.minPayment, 0);
@@ -329,7 +369,13 @@ function updateCalculator() {
     .reduce((sum, debt) => sum + debt.balance, 0);
   const dti = income > 0 ? minPayments / income : 0;
   const availableAfterMinimums = income - expenses - minPayments;
-  const suggestedExtraPayment = Math.max(0, Math.floor((availableAfterMinimums * 0.7) / 10) * 10);
+  const options = repaymentOptions(availableAfterMinimums);
+  updateComfortOptions(options, availableAfterMinimums);
+  let extraPayment = numberValue("#extra-payment");
+  if (repaymentMode !== "custom") {
+    extraPayment = options[repaymentMode].extra;
+    document.querySelector("#extra-payment").value = extraPayment;
+  }
   const breathingRoom = availableAfterMinimums - extraPayment;
   const payoff = simulatePayoff(activeDebts, strategy, extraPayment);
   const score = calculateScore({
@@ -353,21 +399,27 @@ function updateCalculator() {
   payoffMonthsEl.textContent = formatMonths(payoff.months, payoff.stalled);
   interestPaidEl.textContent = payoff.stalled ? "Review needed" : formatRM(payoff.totalInterest);
   availableAfterMinimumsEl.textContent = formatRM(availableAfterMinimums);
-  suggestedExtraPaymentEl.textContent = formatRM(suggestedExtraPayment);
-  document.querySelector(".extra-guidance").classList.toggle("warning", availableAfterMinimums >= 0 && breathingRoom < 0);
-  document.querySelector(".extra-guidance").classList.toggle("danger", availableAfterMinimums < 0);
+  selectedExtraPaymentEl.textContent = formatRM(extraPayment);
+  extraGuidanceEl.classList.toggle("warning", availableAfterMinimums >= 0 && breathingRoom < 0);
+  extraGuidanceEl.classList.toggle("danger", availableAfterMinimums < 0);
   if (availableAfterMinimums < 0) {
     extraPaymentGuidanceEl.textContent =
-      "Your essentials and minimum debt payments are already higher than your take-home income. Do not force extra repayment until the monthly gap is addressed.";
+      "Your essentials and minimum debt payments are already higher than your take-home income. Do not add extra repayment yet.";
   } else if (extraPayment > availableAfterMinimums) {
     extraPaymentGuidanceEl.textContent =
       "Your extra payment is higher than the cash available after essentials and minimum debt payments. Reduce it or review your expenses.";
-  } else if (extraPayment === 0) {
+  } else if (repaymentMode === "custom" && extraPayment === 0) {
     extraPaymentGuidanceEl.textContent =
-      "You can leave extra repayment at RM0, or use the suggested amount if you want a faster payoff while keeping some buffer.";
+      "Custom is set to RM0. That is acceptable if you are unsure or need to protect your monthly buffer.";
+  } else if (repaymentMode === "aggressive") {
+    extraPaymentGuidanceEl.textContent =
+      "Aggressive repayment clears debt faster but leaves less monthly buffer. Use this only if your expenses are stable.";
+  } else if (repaymentMode === "conservative") {
+    extraPaymentGuidanceEl.textContent =
+      "Conservative repayment keeps more monthly buffer while still paying extra toward debt.";
   } else {
     extraPaymentGuidanceEl.textContent =
-      "Minimum debt payments are pulled from the debt list below. The suggested amount keeps around 30% of available cash as buffer.";
+      "Balanced repayment uses about half of your available cash for debt and keeps the rest as breathing room.";
   }
   diagnosisEl.textContent = buildDiagnosis({
     dti,
@@ -401,6 +453,9 @@ function addDebt() {
 }
 
 formEl.addEventListener("input", (event) => {
+  if (event.target.id === "extra-payment") {
+    document.querySelector('input[name="repayment-mode"][value="custom"]').checked = true;
+  }
   if (event.target.matches("[data-field]")) {
     syncDebtFromInput(event.target);
   }
@@ -424,29 +479,16 @@ useExpenseBreakdownButton.addEventListener("click", () => {
   updateCalculator();
 });
 
-useSuggestedExtraButton.addEventListener("click", () => {
-  const income = numberValue("#monthly-income");
-  const expenses = numberValue("#monthly-expenses");
-  const minPayments = debts
-    .filter((debt) => debt.balance > 0 && debt.minPayment > 0)
-    .reduce((sum, debt) => sum + debt.minPayment, 0);
-  const availableAfterMinimums = income - expenses - minPayments;
-  document.querySelector("#extra-payment").value = Math.max(
-    0,
-    Math.floor((availableAfterMinimums * 0.7) / 10) * 10,
-  );
-  updateCalculator();
-});
-
 resetButton.addEventListener("click", () => {
   debts = demoDebts.map((debt) => ({ ...debt, id: crypto.randomUUID() }));
   document.querySelector("#monthly-income").value = 4200;
   document.querySelector("#monthly-expenses").value = 2100;
-  document.querySelector("#extra-payment").value = 350;
+  document.querySelector("#extra-payment").value = 0;
   [700, 650, 300, 120, 100, 160, 0, 70].forEach((value, index) => {
     if (expenseInputs[index]) expenseInputs[index].value = value;
   });
   document.querySelector('input[name="strategy"][value="avalanche"]').checked = true;
+  document.querySelector('input[name="repayment-mode"][value="balanced"]').checked = true;
   renderRows();
   updateCalculator();
 });

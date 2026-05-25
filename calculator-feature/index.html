@@ -16,105 +16,88 @@
         the data attributes used by the JavaScript.
       </p>
 
+      <ol class="flow-progress">
+        <li>Income</li>
+        <li>Expenses</li>
+        <li>Debts</li>
+        <li>Comfort</li>
+        <li>Method</li>
+      </ol>
+
       <div class="calculator-grid">
         <section class="panel" aria-labelledby="inputs-title">
-          <h2 id="inputs-title">Inputs</h2>
+          <h2 id="inputs-title">Guided calculator flow</h2>
 
-          <div class="field-grid">
+          <section class="flow-step">
+            <h3>Step 1: Income</h3>
             <label>
               Monthly take-home income
               <input data-field="monthlyIncome" type="number" min="0" value="4500" />
               <small>After EPF, SOCSO, PCB, and payroll deductions.</small>
             </label>
+          </section>
+
+          <section class="flow-step">
+            <h3>Step 2: Essential expenses</h3>
             <label>
               Essential monthly expenses
               <input data-field="essentialExpenses" type="number" min="0" value="1500" />
               <small>Non-debt expenses only. Do not include debt payments listed below.</small>
             </label>
-            <label>
-              Extra amount for debt payoff
-              <input data-field="extraDebtPayment" type="number" min="0" value="500" />
-              <small>Extra amount on top of all required minimum debt payments.</small>
-            </label>
-          </div>
 
-          <details class="breakdown-box">
-            <summary>Optional expense breakdown</summary>
-            <p>
-              Use this if users are not sure what to enter for essential monthly
-              expenses. These fields should exclude debt payments.
-            </p>
-            <div class="field-grid">
-              <label>
-                Rent / parents' house
-                <input data-expense-item type="number" min="0" value="700" />
-              </label>
-              <label>
-                Food and groceries
-                <input data-expense-item type="number" min="0" value="650" />
-              </label>
-              <label>
-                Petrol / toll / transport
-                <input data-expense-item type="number" min="0" value="300" />
-              </label>
-              <label>
-                Utilities
-                <input data-expense-item type="number" min="0" value="120" />
-              </label>
-              <label>
-                Phone / internet
-                <input data-expense-item type="number" min="0" value="100" />
-              </label>
-              <label>
-                Insurance / medical
-                <input data-expense-item type="number" min="0" value="160" />
-              </label>
-              <label>
-                Family support
-                <input data-expense-item type="number" min="0" value="0" />
-              </label>
-              <label>
-                Subscriptions / other
-                <input data-expense-item type="number" min="0" value="70" />
-              </label>
-            </div>
-            <p>
-              Breakdown total: <strong data-output="expenseBreakdownTotal">RM 0</strong>
-            </p>
-            <button type="button" data-action="useExpenseBreakdown">
-              Use breakdown total as expenses
-            </button>
-          </details>
-
-          <section class="cashflow-box">
-            <h3>Extra repayment guidance</h3>
-            <p>
-              Available after expenses and minimum debt payments:
-              <strong data-output="availableAfterMinimums">RM 0</strong>
-            </p>
-            <p>
-              Suggested extra amount for debt payoff:
-              <strong data-output="suggestedExtraPayment">RM 0</strong>
-            </p>
-            <button type="button" data-action="useSuggestedExtra">
-              Use suggested amount
-            </button>
+            <details class="breakdown-box">
+              <summary>Optional expense breakdown</summary>
+              <p>
+                Use this if users are not sure what to enter for essential monthly
+                expenses. These fields should exclude debt payments.
+              </p>
+              <div class="field-grid">
+                <label>
+                  Rent / parents' house
+                  <input data-expense-item type="number" min="0" value="700" />
+                </label>
+                <label>
+                  Food and groceries
+                  <input data-expense-item type="number" min="0" value="650" />
+                </label>
+                <label>
+                  Petrol / toll / transport
+                  <input data-expense-item type="number" min="0" value="300" />
+                </label>
+                <label>
+                  Utilities
+                  <input data-expense-item type="number" min="0" value="120" />
+                </label>
+                <label>
+                  Phone / internet
+                  <input data-expense-item type="number" min="0" value="100" />
+                </label>
+                <label>
+                  Insurance / medical
+                  <input data-expense-item type="number" min="0" value="160" />
+                </label>
+                <label>
+                  Family support
+                  <input data-expense-item type="number" min="0" value="0" />
+                </label>
+                <label>
+                  Subscriptions / other
+                  <input data-expense-item type="number" min="0" value="70" />
+                </label>
+              </div>
+              <p>
+                Breakdown total: <strong data-output="expenseBreakdownTotal">RM 0</strong>
+              </p>
+              <button type="button" data-action="useExpenseBreakdown">
+                Use breakdown total as expenses
+              </button>
+            </details>
           </section>
 
-          <div class="strategy-options" aria-label="Payoff strategy">
-            <label>
-              <input data-field="strategy" type="radio" name="strategy" value="avalanche" checked />
-              Avalanche
-            </label>
-            <label>
-              <input data-field="strategy" type="radio" name="strategy" value="snowball" />
-              Snowball
-            </label>
-          </div>
-
-          <h2>Debt list</h2>
-          <div data-debt-list>
-            <div class="debt-row" data-debt-row data-debt-id="credit-card">
+          <section class="flow-step">
+            <h3>Step 3: Debt list and minimum payments</h3>
+            <div data-debt-list>
+              <div class="debt-row" data-debt-row data-debt-id="credit-card">
               <label>
                 Debt name
                 <input data-field="debtName" type="text" value="Credit card" />
@@ -132,9 +115,9 @@
                 <input data-field="minimumPayment" type="number" min="0" value="410" />
               </label>
               <button type="button" data-action="removeDebt">Remove</button>
-            </div>
+              </div>
 
-            <div class="debt-row" data-debt-row data-debt-id="personal-loan">
+              <div class="debt-row" data-debt-row data-debt-id="personal-loan">
               <label>
                 Debt name
                 <input data-field="debtName" type="text" value="Personal loan" />
@@ -152,9 +135,9 @@
                 <input data-field="minimumPayment" type="number" min="0" value="530" />
               </label>
               <button type="button" data-action="removeDebt">Remove</button>
-            </div>
+              </div>
 
-            <div class="debt-row" data-debt-row data-debt-id="bnpl-paylater">
+              <div class="debt-row" data-debt-row data-debt-id="bnpl-paylater">
               <label>
                 Debt name
                 <input data-field="debtName" type="text" value="BNPL / PayLater" />
@@ -172,12 +155,60 @@
                 <input data-field="minimumPayment" type="number" min="0" value="210" />
               </label>
               <button type="button" data-action="removeDebt">Remove</button>
+              </div>
             </div>
-          </div>
 
-          <div class="button-row">
-            <button type="button" data-action="addDebt">Add debt</button>
-          </div>
+            <div class="button-row">
+              <button type="button" data-action="addDebt">Add debt</button>
+            </div>
+          </section>
+
+          <section class="flow-step cashflow-box">
+            <h3>Step 4: Repayment comfort</h3>
+            <p>
+              Available after expenses and minimum debt payments:
+              <strong data-output="availableAfterMinimums">RM 0</strong>
+            </p>
+            <div class="mode-grid">
+              <label>
+                <input data-field="repaymentMode" type="radio" name="repaymentMode" value="conservative" />
+                Conservative: <strong data-output="conservativeExtra">RM 0</strong> extra,
+                <span data-output="conservativeBuffer">RM 0</span> buffer
+              </label>
+              <label>
+                <input data-field="repaymentMode" type="radio" name="repaymentMode" value="balanced" checked />
+                Balanced: <strong data-output="balancedExtra">RM 0</strong> extra,
+                <span data-output="balancedBuffer">RM 0</span> buffer
+              </label>
+              <label>
+                <input data-field="repaymentMode" type="radio" name="repaymentMode" value="aggressive" />
+                Aggressive: <strong data-output="aggressiveExtra">RM 0</strong> extra,
+                <span data-output="aggressiveBuffer">RM 0</span> buffer
+              </label>
+              <label>
+                <input data-field="repaymentMode" type="radio" name="repaymentMode" value="custom" />
+                Custom amount
+              </label>
+            </div>
+            <label>
+              Custom extra amount for debt payoff
+              <input data-field="extraDebtPayment" type="number" min="0" value="0" />
+            </label>
+          </section>
+
+          <section class="flow-step">
+            <h3>Step 5: Payoff method</h3>
+            <div class="strategy-options" aria-label="Payoff strategy">
+              <label>
+                <input data-field="strategy" type="radio" name="strategy" value="avalanche" checked />
+                Avalanche
+              </label>
+              <label>
+                <input data-field="strategy" type="radio" name="strategy" value="snowball" />
+                Snowball
+              </label>
+            </div>
+          </section>
         </section>
 
         <aside class="panel" aria-labelledby="results-title">

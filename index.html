@@ -61,175 +61,136 @@
             </div>
 
             <form class="calculator-form" id="calculator-form">
-              <div class="field-grid three-columns">
-                <label>
+              <ol class="flow-progress" aria-label="Calculator steps">
+                <li>Income</li>
+                <li>Expenses</li>
+                <li>Debts</li>
+                <li>Comfort</li>
+                <li>Method</li>
+              </ol>
+
+              <section class="flow-step" aria-labelledby="income-step-title">
+                <div class="step-heading">
+                  <span>Step 1</span>
+                  <div>
+                    <h3 id="income-step-title">Monthly take-home income</h3>
+                    <p>Use your income after EPF, SOCSO, PCB, and payroll deductions.</p>
+                  </div>
+                </div>
+                <label class="wide-field">
                   <span>Monthly take-home income</span>
                   <div class="money-field">
                     <span>RM</span>
-                    <input
-                      id="monthly-income"
-                      type="number"
-                      min="0"
-                      step="50"
-                      value="4200"
-                      aria-describedby="income-help"
-                    />
+                    <input id="monthly-income" type="number" min="0" step="50" value="4200" />
                   </div>
-                  <small id="income-help">After EPF, SOCSO, PCB, and payroll deductions.</small>
                 </label>
-                <label>
+              </section>
+
+              <section class="flow-step" aria-labelledby="expenses-step-title">
+                <div class="step-heading">
+                  <span>Step 2</span>
+                  <div>
+                    <h3 id="expenses-step-title">Essential monthly expenses</h3>
+                    <p>Normal living costs only. Debt repayments belong in the debt list.</p>
+                  </div>
+                </div>
+                <label class="wide-field">
                   <span>Essential monthly expenses</span>
                   <div class="money-field">
                     <span>RM</span>
-                    <input
-                      id="monthly-expenses"
-                      type="number"
-                      min="0"
-                      step="50"
-                      value="2100"
-                      aria-describedby="expenses-help"
-                    />
+                    <input id="monthly-expenses" type="number" min="0" step="50" value="2100" />
                   </div>
-                  <small id="expenses-help">Non-debt costs only. Do not include debts listed below.</small>
+                  <small>Do not include credit card, personal loan, BNPL, PTPTN, car loan, or other debt repayments here.</small>
                 </label>
-                <label>
-                  <span>Extra amount for debt payoff</span>
-                  <div class="money-field">
-                    <span>RM</span>
-                    <input
-                      id="extra-payment"
-                      type="number"
-                      min="0"
-                      step="25"
-                      value="350"
-                      aria-describedby="extra-payment-help"
-                    />
-                  </div>
-                  <small id="extra-payment-help">Extra amount on top of all minimum debt payments.</small>
-                </label>
-              </div>
 
-              <details class="expense-breakdown">
-                <summary>
-                  <span>Not sure what to put for essential expenses?</span>
-                  <strong>Open breakdown</strong>
-                </summary>
-                <p>
-                  Use this optional breakdown for non-debt expenses only. Credit card,
-                  personal loan, BNPL, PTPTN, and other debt payments should stay in the
-                  debt list below.
-                </p>
-                <div class="expense-grid">
-                  <label>
-                    <span>Rent / parents' house</span>
-                    <div class="money-field">
-                      <span>RM</span>
-                      <input data-expense-item type="number" min="0" step="10" value="700" />
-                    </div>
-                  </label>
-                  <label>
-                    <span>Food and groceries</span>
-                    <div class="money-field">
-                      <span>RM</span>
-                      <input data-expense-item type="number" min="0" step="10" value="650" />
-                    </div>
-                  </label>
-                  <label>
-                    <span>Petrol / toll / transport</span>
-                    <div class="money-field">
-                      <span>RM</span>
-                      <input data-expense-item type="number" min="0" step="10" value="300" />
-                    </div>
-                  </label>
-                  <label>
-                    <span>Utilities</span>
-                    <div class="money-field">
-                      <span>RM</span>
-                      <input data-expense-item type="number" min="0" step="10" value="120" />
-                    </div>
-                  </label>
-                  <label>
-                    <span>Phone / internet</span>
-                    <div class="money-field">
-                      <span>RM</span>
-                      <input data-expense-item type="number" min="0" step="10" value="100" />
-                    </div>
-                  </label>
-                  <label>
-                    <span>Insurance / medical</span>
-                    <div class="money-field">
-                      <span>RM</span>
-                      <input data-expense-item type="number" min="0" step="10" value="160" />
-                    </div>
-                  </label>
-                  <label>
-                    <span>Family support</span>
-                    <div class="money-field">
-                      <span>RM</span>
-                      <input data-expense-item type="number" min="0" step="10" value="0" />
-                    </div>
-                  </label>
-                  <label>
-                    <span>Subscriptions / other</span>
-                    <div class="money-field">
-                      <span>RM</span>
-                      <input data-expense-item type="number" min="0" step="10" value="70" />
-                    </div>
-                  </label>
-                </div>
-                <div class="breakdown-footer">
-                  <div>
-                    <span>Breakdown total</span>
-                    <strong id="expense-breakdown-total">RM0</strong>
+                <details class="expense-breakdown">
+                  <summary>
+                    <span>Not sure what to put for essential expenses?</span>
+                    <strong>Open breakdown</strong>
+                  </summary>
+                  <p>
+                    Use this optional breakdown for non-debt expenses only. Credit card,
+                    personal loan, BNPL, PTPTN, and other debt payments should stay in the
+                    debt list below.
+                  </p>
+                  <div class="expense-grid">
+                    <label>
+                      <span>Rent / parents' house</span>
+                      <div class="money-field">
+                        <span>RM</span>
+                        <input data-expense-item type="number" min="0" step="10" value="700" />
+                      </div>
+                    </label>
+                    <label>
+                      <span>Food and groceries</span>
+                      <div class="money-field">
+                        <span>RM</span>
+                        <input data-expense-item type="number" min="0" step="10" value="650" />
+                      </div>
+                    </label>
+                    <label>
+                      <span>Petrol / toll / transport</span>
+                      <div class="money-field">
+                        <span>RM</span>
+                        <input data-expense-item type="number" min="0" step="10" value="300" />
+                      </div>
+                    </label>
+                    <label>
+                      <span>Utilities</span>
+                      <div class="money-field">
+                        <span>RM</span>
+                        <input data-expense-item type="number" min="0" step="10" value="120" />
+                      </div>
+                    </label>
+                    <label>
+                      <span>Phone / internet</span>
+                      <div class="money-field">
+                        <span>RM</span>
+                        <input data-expense-item type="number" min="0" step="10" value="100" />
+                      </div>
+                    </label>
+                    <label>
+                      <span>Insurance / medical</span>
+                      <div class="money-field">
+                        <span>RM</span>
+                        <input data-expense-item type="number" min="0" step="10" value="160" />
+                      </div>
+                    </label>
+                    <label>
+                      <span>Family support</span>
+                      <div class="money-field">
+                        <span>RM</span>
+                        <input data-expense-item type="number" min="0" step="10" value="0" />
+                      </div>
+                    </label>
+                    <label>
+                      <span>Subscriptions / other</span>
+                      <div class="money-field">
+                        <span>RM</span>
+                        <input data-expense-item type="number" min="0" step="10" value="70" />
+                      </div>
+                    </label>
                   </div>
-                  <button class="secondary-button" type="button" id="use-expense-breakdown">
-                    Use this as expenses
-                  </button>
-                </div>
-              </details>
-
-              <section class="extra-guidance" aria-label="Extra repayment guidance">
-                <div>
-                  <span>Available after expenses and minimum debt payments</span>
-                  <strong id="available-after-minimums">RM0</strong>
-                </div>
-                <div>
-                  <span>Suggested safe extra debt payment</span>
-                  <strong id="suggested-extra-payment">RM0</strong>
-                </div>
-                <p id="extra-payment-guidance">
-                  Minimum debt payments are calculated from the debt list below.
-                </p>
-                <button class="secondary-button" type="button" id="use-suggested-extra">
-                  Use suggested amount
-                </button>
+                  <div class="breakdown-footer">
+                    <div>
+                      <span>Breakdown total</span>
+                      <strong id="expense-breakdown-total">RM0</strong>
+                    </div>
+                    <button class="secondary-button" type="button" id="use-expense-breakdown">
+                      Use this as essential expenses
+                    </button>
+                  </div>
+                </details>
               </section>
 
-              <fieldset class="strategy-fieldset">
-                <legend>Payoff strategy</legend>
-                <div class="segmented-control" role="radiogroup" aria-label="Payoff strategy">
-                  <label>
-                    <input type="radio" name="strategy" value="avalanche" checked />
-                    <span>
-                      <strong>Avalanche</strong>
-                      Highest interest first
-                    </span>
-                  </label>
-                  <label>
-                    <input type="radio" name="strategy" value="snowball" />
-                    <span>
-                      <strong>Snowball</strong>
-                      Smallest balance first
-                    </span>
-                  </label>
-                </div>
-              </fieldset>
-
-              <section class="debt-editor" aria-labelledby="debts-title">
+              <section class="flow-step debt-editor" aria-labelledby="debts-title">
                 <div class="editor-heading">
-                  <div>
-                    <p class="section-code">02 / Debt list</p>
-                    <h2 id="debts-title">Current commitments</h2>
+                  <div class="step-heading">
+                    <span>Step 3</span>
+                    <div>
+                      <h3 id="debts-title">Debt list and minimum payments</h3>
+                      <p>Add each debt so the calculator can calculate your minimum monthly debt commitment.</p>
+                    </div>
                   </div>
                   <button class="secondary-button" type="button" id="add-debt">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -253,6 +214,107 @@
                     <tbody id="debt-rows"></tbody>
                   </table>
                 </div>
+              </section>
+
+              <section class="flow-step" aria-labelledby="comfort-step-title">
+                <div class="step-heading">
+                  <span>Step 4</span>
+                  <div>
+                    <h3 id="comfort-step-title">Choose your repayment comfort</h3>
+                    <p>The calculator suggests options after checking your available cash.</p>
+                  </div>
+                </div>
+
+                <section class="extra-guidance" aria-label="Extra repayment guidance">
+                  <div>
+                    <span>Available after essentials and minimum debt payments</span>
+                    <strong id="available-after-minimums">RM0</strong>
+                  </div>
+                  <div>
+                    <span>Selected extra debt payment</span>
+                    <strong id="selected-extra-payment">RM0</strong>
+                  </div>
+                  <p id="extra-payment-guidance">
+                    Minimum debt payments are calculated from the debt list above.
+                  </p>
+                </section>
+
+                <fieldset class="comfort-fieldset">
+                  <legend>Repayment comfort mode</legend>
+                  <div class="comfort-options">
+                    <label>
+                      <input type="radio" name="repayment-mode" value="conservative" />
+                      <span>
+                        <strong>Conservative</strong>
+                        <em id="conservative-extra">RM0 extra</em>
+                        <small id="conservative-buffer">Keeps more buffer</small>
+                      </span>
+                    </label>
+                    <label>
+                      <input type="radio" name="repayment-mode" value="balanced" checked />
+                      <span>
+                        <strong>Balanced</strong>
+                        <em id="balanced-extra">RM0 extra</em>
+                        <small id="balanced-buffer">Keeps some breathing room</small>
+                      </span>
+                    </label>
+                    <label>
+                      <input type="radio" name="repayment-mode" value="aggressive" />
+                      <span>
+                        <strong>Aggressive</strong>
+                        <em id="aggressive-extra">RM0 extra</em>
+                        <small id="aggressive-buffer">Fastest, least buffer</small>
+                      </span>
+                    </label>
+                    <label>
+                      <input type="radio" name="repayment-mode" value="custom" />
+                      <span>
+                        <strong>Custom</strong>
+                        <em>Choose yourself</em>
+                        <small>Use if you already know the amount</small>
+                      </span>
+                    </label>
+                  </div>
+                </fieldset>
+
+                <label class="wide-field custom-extra-field">
+                  <span>Custom extra amount for debt payoff</span>
+                  <div class="money-field">
+                    <span>RM</span>
+                    <input id="extra-payment" type="number" min="0" step="25" value="0" />
+                  </div>
+                  <small>Leave as RM0 if unsure. Choosing Conservative, Balanced, or Aggressive will fill this for you.</small>
+                </label>
+              </section>
+
+              <section class="flow-step" aria-labelledby="method-step-title">
+                <div class="step-heading">
+                  <span>Step 5</span>
+                  <div>
+                    <h3 id="method-step-title">Choose payoff method</h3>
+                    <p>Avalanche usually saves more interest. Snowball gives faster small wins.</p>
+                  </div>
+                </div>
+
+                <fieldset class="strategy-fieldset">
+                  <legend>Payoff strategy</legend>
+                  <div class="segmented-control" role="radiogroup" aria-label="Payoff strategy">
+                    <label>
+                      <input type="radio" name="strategy" value="avalanche" checked />
+                      <span>
+                        <strong>Avalanche</strong>
+                        Highest interest first
+                      </span>
+                    </label>
+                    <label>
+                      <input type="radio" name="strategy" value="snowball" />
+                      <span>
+                        <strong>Snowball</strong>
+                        Smallest balance first
+                      </span>
+                    </label>
+                  </div>
+                </fieldset>
               </section>
             </form>
           </section>

@@ -32,15 +32,21 @@ data-debt-calculator
 data-field="monthlyIncome"
 data-field="essentialExpenses"
 data-field="extraDebtPayment"
+data-field="repaymentMode"
 data-field="strategy"
 data-expense-item
 data-debt-list
 data-debt-row
 data-action="useExpenseBreakdown"
-data-action="useSuggestedExtra"
 data-output="totalDebt"
 data-output="debtCommitmentRatio"
 data-output="expenseBreakdownTotal"
+data-output="conservativeExtra"
+data-output="conservativeBuffer"
+data-output="balancedExtra"
+data-output="balancedBuffer"
+data-output="aggressiveExtra"
+data-output="aggressiveBuffer"
 data-output="payoffTime"
 data-output="interestPaid"
 data-output="healthScore"
@@ -60,7 +66,7 @@ Essential monthly expenses:
 Non-debt monthly expenses only. Examples: rent, food, petrol, toll, utilities, phone, insurance, family support, groceries, and basic personal spending.
 
 Extra amount for debt payoff:
-The amount the user can pay on top of all minimum debt payments. If the user is unsure, the calculator shows a suggested extra amount based on available monthly cash.
+The amount the user can pay on top of all minimum debt payments. If the user is unsure, the calculator should guide them using Conservative, Balanced, and Aggressive repayment comfort modes.
 
 Debt minimum payment:
 The required monthly payment for each debt. This should not be repeated inside essential monthly expenses.
