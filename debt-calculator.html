@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A local mockup for the Malaysian Debt Health and Payoff Calculator."
+    />
+    <title>Debt Health & Payoff Calculator | Malaysians In Debt</title>
+    <link rel="stylesheet" href="./debt-calculator.css" />
+    <script defer src="./debt-calculator.js"></script>
+  </head>
+  <body>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand-lockup" href="#calculator" aria-label="Malaysians In Debt calculator">
+        <span class="brand-mark">MTC</span>
+        <span class="brand-divider" aria-hidden="true">//</span>
+        <span>Malaysians In Debt</span>
+      </a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="#calculator">Calculator</a>
+        <a href="#payoff-plan">Payoff plan</a>
+        <a href="#next-steps">Next steps</a>
+      </nav>
+      <a class="header-action" href="./submission.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14m-7-7h14" />
+        </svg>
+        Submit story
+      </a>
+    </header>
+
+    <main>
+      <section class="calculator-shell" id="calculator" aria-labelledby="page-title">
+        <div class="app-title-row">
+          <div>
+            <p class="section-code">Local mockup</p>
+            <h1 id="page-title">Malaysian Debt Health & Payoff Calculator</h1>
+          </div>
+          <p class="title-note">
+            Estimate your repayment route using monthly income, commitments, interest rates,
+            and either avalanche or snowball payoff logic.
+          </p>
+        </div>
+
+        <div class="workbench">
+          <section class="input-panel" aria-labelledby="inputs-title">
+            <div class="panel-heading">
+              <div>
+                <p class="section-code">01 / Inputs</p>
+                <h2 id="inputs-title">Monthly cash flow</h2>
+              </div>
+              <button class="reset-button" type="button" id="reset-demo">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 4v6h6M20 20v-6h-6" />
+                  <path d="M20 9A8 8 0 0 0 6.3 5.7L4 8m16 8-2.3 2.3A8 8 0 0 1 4 15" />
+                </svg>
+                Reset demo
+              </button>
+            </div>
+
+            <form class="calculator-form" id="calculator-form">
+              <div class="field-grid three-columns">
+                <label>
+                  <span>Monthly income</span>
+                  <div class="money-field">
+                    <span>RM</span>
+                    <input id="monthly-income" type="number" min="0" step="50" value="4200" />
+                  </div>
+                </label>
+                <label>
+                  <span>Fixed living costs</span>
+                  <div class="money-field">
+                    <span>RM</span>
+                    <input id="monthly-expenses" type="number" min="0" step="50" value="2100" />
+                  </div>
+                </label>
+                <label>
+                  <span>Extra debt payment</span>
+                  <div class="money-field">
+                    <span>RM</span>
+                    <input id="extra-payment" type="number" min="0" step="25" value="350" />
+                  </div>
+                </label>
+              </div>
+
+              <fieldset class="strategy-fieldset">
+                <legend>Payoff strategy</legend>
+                <div class="segmented-control" role="radiogroup" aria-label="Payoff strategy">
+                  <label>
+                    <input type="radio" name="strategy" value="avalanche" checked />
+                    <span>
+                      <strong>Avalanche</strong>
+                      Highest interest first
+                    </span>
+                  </label>
+                  <label>
+                    <input type="radio" name="strategy" value="snowball" />
+                    <span>
+                      <strong>Snowball</strong>
+                      Smallest balance first
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <section class="debt-editor" aria-labelledby="debts-title">
+                <div class="editor-heading">
+                  <div>
+                    <p class="section-code">02 / Debt list</p>
+                    <h2 id="debts-title">Current commitments</h2>
+                  </div>
+                  <button class="secondary-button" type="button" id="add-debt">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 5v14m-7-7h14" />
+                    </svg>
+                    Add debt
+                  </button>
+                </div>
+
+                <div class="debt-table-wrap">
+                  <table class="debt-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Debt</th>
+                        <th scope="col">Balance</th>
+                        <th scope="col">Rate</th>
+                        <th scope="col">Min. pay</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="debt-rows"></tbody>
+                  </table>
+                </div>
+              </section>
+            </form>
+          </section>
+
+          <aside class="results-panel" aria-labelledby="results-title">
+            <div class="visual-strip">
+              <img
+                src="./assets/debt-cover-mtc-yellow.png"
+                alt="MoneyTakCukup campaign visual with Malaysian ringgit artwork"
+              />
+            </div>
+
+            <div class="score-block">
+              <div>
+                <p class="section-code">03 / Result</p>
+                <h2 id="results-title">Debt health score</h2>
+              </div>
+              <div class="score-ring" aria-label="Debt health score">
+                <span id="health-score">0</span>
+              </div>
+            </div>
+
+            <div class="status-line" id="status-line">
+              <span class="status-dot"></span>
+              <strong id="status-label">Calculating</strong>
+              <span id="status-copy">Enter debt details to generate the diagnosis.</span>
+            </div>
+
+            <dl class="metric-grid">
+              <div>
+                <dt>Total debt</dt>
+                <dd id="total-debt">RM0</dd>
+              </div>
+              <div>
+                <dt>Debt commitment</dt>
+                <dd id="debt-commitment">0%</dd>
+              </div>
+              <div>
+                <dt>Debt-free estimate</dt>
+                <dd id="payoff-months">0 months</dd>
+              </div>
+              <div>
+                <dt>Interest estimate</dt>
+                <dd id="interest-paid">RM0</dd>
+              </div>
+            </dl>
+
+            <div class="diagnosis">
+              <h3>Diagnosis</h3>
+              <p id="diagnosis-copy"></p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="plan-section" id="payoff-plan" aria-labelledby="plan-title">
+        <div class="section-heading">
+          <p class="section-code">04 / Payoff plan</p>
+          <h2 id="plan-title">What to attack first</h2>
+          <p>
+            This route assumes minimum payments continue and any extra payment is redirected
+            to the priority debt until it is cleared.
+          </p>
+        </div>
+
+        <div class="plan-grid">
+          <div class="priority-panel">
+            <h3>Priority order</h3>
+            <ol class="priority-list" id="priority-list"></ol>
+          </div>
+          <div class="timeline-panel">
+            <h3>Projected balance path</h3>
+            <div class="payoff-bars" id="payoff-bars" aria-label="Projected balance path"></div>
+          </div>
+          <div class="cashflow-panel">
+            <h3>Monthly breathing room</h3>
+            <div class="breathing-number" id="breathing-room">RM0</div>
+            <p id="breathing-copy"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="next-section" id="next-steps" aria-labelledby="next-title">
+        <div class="section-heading">
+          <p class="section-code">05 / Next steps</p>
+          <h2 id="next-title">Action checklist</h2>
+        </div>
+        <div class="checklist-grid">
+          <label>
+            <input type="checkbox" />
+            <span>Confirm the actual outstanding balance from statements or banking apps.</span>
+          </label>
+          <label>
+            <input type="checkbox" />
+            <span>Stop adding new BNPL, card instalments, or balance transfers while repaying.</span>
+          </label>
+          <label>
+            <input type="checkbox" />
+            <span>Call the lender early if payments are already behind or cash flow is negative.</span>
+          </label>
+          <label>
+            <input type="checkbox" />
+            <span>Keep one human review point before acting on any restructuring decision.</span>
+          </label>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

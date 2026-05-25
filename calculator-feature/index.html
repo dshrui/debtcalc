@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debt Calculator Feature Skeleton</title>
+    <link rel="stylesheet" href="./debt-calculator-skeleton.css" />
+    <script src="./debt-calculator-core.js"></script>
+    <script defer src="./debt-calculator-widget.js"></script>
+  </head>
+  <body>
+    <main class="calculator-skeleton" data-debt-calculator>
+      <h1>Malaysian Debt Health & Payoff Calculator</h1>
+      <p>
+        This is the unstyled feature skeleton. Redesign the UI freely, but keep
+        the data attributes used by the JavaScript.
+      </p>
+
+      <div class="calculator-grid">
+        <section class="panel" aria-labelledby="inputs-title">
+          <h2 id="inputs-title">Inputs</h2>
+
+          <div class="field-grid">
+            <label>
+              Monthly take-home income
+              <input data-field="monthlyIncome" type="number" min="0" value="4500" />
+            </label>
+            <label>
+              Essential monthly expenses
+              <input data-field="essentialExpenses" type="number" min="0" value="1500" />
+            </label>
+            <label>
+              Extra amount for debt payoff
+              <input data-field="extraDebtPayment" type="number" min="0" value="500" />
+            </label>
+          </div>
+
+          <div class="strategy-options" aria-label="Payoff strategy">
+            <label>
+              <input data-field="strategy" type="radio" name="strategy" value="avalanche" checked />
+              Avalanche
+            </label>
+            <label>
+              <input data-field="strategy" type="radio" name="strategy" value="snowball" />
+              Snowball
+            </label>
+          </div>
+
+          <h2>Debt list</h2>
+          <div data-debt-list>
+            <div class="debt-row" data-debt-row data-debt-id="credit-card">
+              <label>
+                Debt name
+                <input data-field="debtName" type="text" value="Credit card" />
+              </label>
+              <label>
+                Balance
+                <input data-field="balance" type="number" min="0" value="8200" />
+              </label>
+              <label>
+                Annual rate %
+                <input data-field="annualRate" type="number" min="0" step="0.1" value="18" />
+              </label>
+              <label>
+                Minimum payment
+                <input data-field="minimumPayment" type="number" min="0" value="410" />
+              </label>
+              <button type="button" data-action="removeDebt">Remove</button>
+            </div>
+
+            <div class="debt-row" data-debt-row data-debt-id="personal-loan">
+              <label>
+                Debt name
+                <input data-field="debtName" type="text" value="Personal loan" />
+              </label>
+              <label>
+                Balance
+                <input data-field="balance" type="number" min="0" value="14500" />
+              </label>
+              <label>
+                Annual rate %
+                <input data-field="annualRate" type="number" min="0" step="0.1" value="9.8" />
+              </label>
+              <label>
+                Minimum payment
+                <input data-field="minimumPayment" type="number" min="0" value="530" />
+              </label>
+              <button type="button" data-action="removeDebt">Remove</button>
+            </div>
+
+            <div class="debt-row" data-debt-row data-debt-id="bnpl-paylater">
+              <label>
+                Debt name
+                <input data-field="debtName" type="text" value="BNPL / PayLater" />
+              </label>
+              <label>
+                Balance
+                <input data-field="balance" type="number" min="0" value="1650" />
+              </label>
+              <label>
+                Annual rate %
+                <input data-field="annualRate" type="number" min="0" step="0.1" value="0" />
+              </label>
+              <label>
+                Minimum payment
+                <input data-field="minimumPayment" type="number" min="0" value="210" />
+              </label>
+              <button type="button" data-action="removeDebt">Remove</button>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button type="button" data-action="addDebt">Add debt</button>
+          </div>
+        </section>
+
+        <aside class="panel" aria-labelledby="results-title">
+          <h2 id="results-title">Results</h2>
+
+          <div class="metrics-grid">
+            <div class="metric">
+              <span>Health score</span>
+              <strong data-output="healthScore">0</strong>
+            </div>
+            <div class="metric">
+              <span>Total debt</span>
+              <strong data-output="totalDebt">RM 0</strong>
+            </div>
+            <div class="metric">
+              <span>Debt commitment</span>
+              <strong data-output="debtCommitmentRatio">0%</strong>
+            </div>
+            <div class="metric">
+              <span>Payoff estimate</span>
+              <strong data-output="payoffTime">0 months</strong>
+            </div>
+            <div class="metric">
+              <span>Interest estimate</span>
+              <strong data-output="interestPaid">RM 0</strong>
+            </div>
+            <div class="metric">
+              <span>Suggested extra</span>
+              <strong data-output="suggestedExtraPayment">RM 0</strong>
+            </div>
+          </div>
+
+          <section class="status-card">
+            <h3 data-output="statusLabel">Status</h3>
+            <p data-output="statusCopy"></p>
+            <p data-output="diagnosis"></p>
+          </section>
+
+          <section>
+            <h3>Available after expenses and minimum debt payments</h3>
+            <p data-output="availableAfterMinimums">RM 0</p>
+          </section>
+
+          <section>
+            <h3>Priority order</h3>
+            <ol data-output="priorityList"></ol>
+          </section>
+
+          <section>
+            <h3>Balance path</h3>
+            <ol data-output="balancePath"></ol>
+          </section>
+        </aside>
+      </div>
+
+      <template data-debt-row-template>
+        <div class="debt-row" data-debt-row>
+          <label>
+            Debt name
+            <input data-field="debtName" type="text" value="New debt" />
+          </label>
+          <label>
+            Balance
+            <input data-field="balance" type="number" min="0" value="0" />
+          </label>
+          <label>
+            Annual rate %
+            <input data-field="annualRate" type="number" min="0" step="0.1" value="0" />
+          </label>
+          <label>
+            Minimum payment
+            <input data-field="minimumPayment" type="number" min="0" value="0" />
+          </label>
+          <button type="button" data-action="removeDebt">Remove</button>
+        </div>
+      </template>
+    </main>
+  </body>
+</html>

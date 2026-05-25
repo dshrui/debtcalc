@@ -1,0 +1,132 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 32px;
+  font-family: Arial, sans-serif;
+  background: #f7f4ec;
+  color: #111318;
+}
+
+.calculator-skeleton {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 20px;
+}
+
+.panel {
+  padding: 20px;
+  border: 1px solid #ddd8cc;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.field-grid,
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid #d8d1c4;
+  border-radius: 6px;
+}
+
+.strategy-options {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.debt-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 0.7fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+  padding: 12px 0;
+  border-bottom: 1px solid #ece7dd;
+}
+
+.button-row {
+  margin-top: 14px;
+}
+
+button {
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid #111318;
+  border-radius: 6px;
+  background: #111318;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button[data-action="removeDebt"] {
+  background: #ffffff;
+  color: #b84034;
+  border-color: #ddd8cc;
+}
+
+.metric {
+  padding: 14px;
+  border: 1px solid #ece7dd;
+  border-radius: 8px;
+}
+
+.metric span {
+  display: block;
+  margin-bottom: 6px;
+  color: #5e6472;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.metric strong {
+  font-size: 24px;
+}
+
+[data-status="manageable"] .status-card {
+  border-left: 4px solid #148757;
+}
+
+[data-status="watch"] .status-card {
+  border-left: 4px solid #e3ae24;
+}
+
+[data-status="high-pressure"] .status-card,
+[data-status="critical"] .status-card {
+  border-left: 4px solid #b84034;
+}
+
+@media (max-width: 760px) {
+  body {
+    padding: 16px;
+  }
+
+  .calculator-grid,
+  .field-grid,
+  .metrics-grid,
+  .debt-row {
+    grid-template-columns: 1fr;
+  }
+}
+
