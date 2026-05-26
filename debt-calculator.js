@@ -1,8 +1,109 @@
 const demoDebts = [
-  { name: "Credit card", balance: 8200, rate: 18, minPayment: 410 },
-  { name: "Personal loan", balance: 14500, rate: 9.8, minPayment: 530 },
-  { name: "BNPL / PayLater", balance: 1650, rate: 0, minPayment: 210 },
-  { name: "PTPTN", balance: 7800, rate: 1, minPayment: 150 },
+  { type: "creditCard", name: "Credit card", balance: 8200, rate: 18, minPayment: 410, status: "current" },
+  { type: "personalLoan", name: "Personal loan", balance: 14500, rate: 9.8, minPayment: 530, status: "current" },
+  { type: "bnpl", name: "BNPL / PayLater", balance: 1650, rate: 0, minPayment: 210, status: "dueSoon" },
+  { type: "ptptn", name: "PTPTN", balance: 7800, rate: 1, minPayment: 150, status: "current" },
+];
+
+const debtTypeConfigs = {
+  creditCard: {
+    label: "Credit card",
+    defaultName: "Credit card",
+    structure: "Revolving interest",
+    helper: "Use statement balance, minimum due, and annual finance charge if known.",
+    rateHint: "Rate matters here. Use the annual finance charge if known.",
+    defaultRate: 18,
+  },
+  bnpl: {
+    label: "BNPL / PayLater",
+    defaultName: "BNPL / PayLater",
+    structure: "Scheduled payment",
+    helper: "No rate needed for most BNPL. Enter total outstanding and the monthly amount due.",
+    rateHint: "Keep 0 unless the provider shows a finance charge.",
+    defaultRate: 0,
+  },
+  personalLoan: {
+    label: "Personal loan / financing",
+    defaultName: "Personal loan",
+    structure: "Fixed instalment",
+    helper: "Use monthly instalment and outstanding balance or settlement amount if known.",
+    rateHint: "Use effective annual rate if known. Otherwise leave current estimate.",
+    defaultRate: 8,
+  },
+  carLoan: {
+    label: "Car loan / hire purchase",
+    defaultName: "Car loan",
+    structure: "Secured instalment",
+    helper: "Use monthly instalment, outstanding amount, and mark overdue if the car may be at risk.",
+    rateHint: "Use effective rate if known. Flat-rate loans may not match this estimate exactly.",
+    defaultRate: 5,
+  },
+  housingLoan: {
+    label: "Housing loan",
+    defaultName: "Housing loan",
+    structure: "Secured long-term loan",
+    helper: "Use monthly instalment and outstanding balance. Overdue status matters more than snowball size.",
+    rateHint: "Use current annual rate if known.",
+    defaultRate: 4,
+  },
+  ptptn: {
+    label: "PTPTN",
+    defaultName: "PTPTN",
+    structure: "Education repayment",
+    helper: "Use scheduled monthly repayment, salary deduction amount, or arrears amount if applicable.",
+    rateHint: "Usually low-cost. Use 1% if unsure.",
+    defaultRate: 1,
+  },
+  salaryDeduction: {
+    label: "Koperasi / salary deduction",
+    defaultName: "Koperasi loan",
+    structure: "Salary deduction",
+    helper: "Use the monthly deduction because it directly reduces take-home cash flow.",
+    rateHint: "Use contract rate if known. Otherwise leave 0.",
+    defaultRate: 0,
+  },
+  moneylender: {
+    label: "Licensed moneylender / Kredit Komuniti",
+    defaultName: "Kredit Komuniti",
+    structure: "High-risk repayment",
+    helper: "Use outstanding amount and monthly due. If overdue or under pressure, mark the status clearly.",
+    rateHint: "Use contract rate if known. This needs human review if collection pressure exists.",
+    defaultRate: 12,
+  },
+  familyFriend: {
+    label: "Family / friend debt",
+    defaultName: "Family / friend",
+    structure: "Relationship commitment",
+    helper: "Use promised monthly amount and urgency. Interest may not be the main issue.",
+    rateHint: "Usually 0 unless agreed otherwise.",
+    defaultRate: 0,
+  },
+  arrears: {
+    label: "Telco / utility / rent arrears",
+    defaultName: "Arrears",
+    structure: "Urgency-based arrears",
+    helper: "Use the overdue amount and monthly catch-up payment. Disconnection or eviction risk matters.",
+    rateHint: "Usually 0. Priority comes from urgency, not rate.",
+    defaultRate: 0,
+  },
+  other: {
+    label: "Other debt",
+    defaultName: "Other debt",
+    structure: "Custom repayment",
+    helper: "Use amount owed, monthly amount due, and status.",
+    rateHint: "Use annual rate if relevant. Otherwise leave 0.",
+    defaultRate: 0,
+  },
+};
+
+const debtStatuses = [
+  { value: "current", label: "Current", note: "Payment is up to date." },
+  { value: "dueSoon", label: "Due soon", note: "Watch the next due date before adding extra elsewhere." },
+  { value: "overdue1", label: "1 month overdue", note: "Clear arrears before chasing long-term optimisation." },
+  { value: "overdue2", label: "2+ months overdue", note: "High priority. Speak to lender and prevent escalation." },
+  { value: "restructured", label: "Restructured / AKPK", note: "Follow the agreed plan before extra payments." },
+  { value: "collection", label: "Collection pressure", note: "Urgent. Get human review before promising new terms." },
+  { value: "notSure", label: "Not sure", note: "Check statement, app, CCRIS/eCCRIS, or provider portal." },
 ];
 
 const rowsEl = document.querySelector("#debt-rows");
@@ -43,6 +144,45 @@ const formatter = new Intl.NumberFormat("en-MY", {
 
 function formatRM(value) {
   return formatter.format(Number.isFinite(value) ? value : 0).replace("MYR", "RM");
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+}
+
+function debtTypeConfig(type) {
+  return debtTypeConfigs[type] ?? debtTypeConfigs.other;
+}
+
+function statusConfig(status) {
+  return debtStatuses.find((item) => item.value === status) ?? debtStatuses[0];
+}
+
+function renderDebtTypeOptions(selectedType) {
+  return Object.entries(debtTypeConfigs)
+    .map(([value, config]) => {
+      const selected = value === selectedType ? "selected" : "";
+      return `<option value="${value}" ${selected}>${escapeHtml(config.label)}</option>`;
+    })
+    .join("");
+}
+
+function renderStatusOptions(selectedStatus) {
+  return debtStatuses
+    .map((status) => {
+      const selected = status.value === selectedStatus ? "selected" : "";
+      return `<option value="${status.value}" ${selected}>${escapeHtml(status.label)}</option>`;
+    })
+    .join("");
 }
 
 function formatMonths(months, stalled) {
@@ -151,40 +291,57 @@ function updateBufferRecommendation(recommendation) {
 
 function renderRows() {
   rowsEl.innerHTML = debts
-    .map(
-      (debt) => `
+    .map((debt) => {
+      const config = debtTypeConfig(debt.type);
+      const status = statusConfig(debt.status);
+      const safeName = escapeHtml(debt.name);
+      return `
         <tr data-id="${debt.id}">
-          <td data-label="Debt">
-            <input class="debt-name" data-field="name" type="text" value="${debt.name}" aria-label="Debt name" />
+          <td data-label="Debt type">
+            <select class="debt-type-select" data-field="type" aria-label="${safeName} debt type">
+              ${renderDebtTypeOptions(debt.type)}
+            </select>
+            <input class="debt-name" data-field="name" type="text" value="${safeName}" aria-label="Debt name or provider" />
+            <div class="debt-status-inline">
+              <select class="status-select" data-field="status" aria-label="${safeName} payment status">
+                ${renderStatusOptions(debt.status)}
+              </select>
+              <small class="field-hint">${escapeHtml(status.note)}</small>
+            </div>
+            <small class="debt-helper">
+              <strong>${escapeHtml(config.structure)}</strong>
+              ${escapeHtml(config.helper)}
+            </small>
           </td>
           <td data-label="Balance">
             <div class="table-input money-field">
               <span>RM</span>
-              <input data-field="balance" type="number" min="0" step="50" value="${debt.balance}" aria-label="${debt.name} balance" />
+              <input data-field="balance" type="number" min="0" step="50" value="${debt.balance}" aria-label="${safeName} balance" />
             </div>
           </td>
-          <td data-label="Rate">
+          <td data-label="Rate / fee">
             <div class="rate-field">
-              <input data-field="rate" type="number" min="0" step="0.1" value="${debt.rate}" aria-label="${debt.name} interest rate" />
+              <input data-field="rate" type="number" min="0" step="0.1" value="${debt.rate}" aria-label="${safeName} interest rate or fee" />
               <span>%</span>
             </div>
+            <small class="field-hint">${escapeHtml(config.rateHint)}</small>
           </td>
-          <td data-label="Minimum pay">
+          <td data-label="Monthly pay">
             <div class="table-input money-field">
               <span>RM</span>
-              <input data-field="minPayment" type="number" min="0" step="10" value="${debt.minPayment}" aria-label="${debt.name} minimum payment" />
+              <input data-field="minPayment" type="number" min="0" step="10" value="${debt.minPayment}" aria-label="${safeName} minimum or scheduled monthly payment" />
             </div>
           </td>
           <td data-label="Action">
-            <button class="remove-debt" type="button" aria-label="Remove ${debt.name}">
+            <button class="remove-debt" type="button" aria-label="Remove ${safeName}">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M18 6 6 18M6 6l12 12" />
               </svg>
             </button>
           </td>
         </tr>
-      `,
-    )
+      `;
+    })
     .join("");
 }
 
@@ -196,13 +353,33 @@ function syncDebtFromInput(input) {
   if (!debt) return;
 
   const field = input.dataset.field;
+  if (field === "type") {
+    const previousConfig = debtTypeConfig(debt.type);
+    const oldDefaultNames = new Set([previousConfig.defaultName, previousConfig.label, "New debt"]);
+    debt.type = input.value;
+    const nextConfig = debtTypeConfig(debt.type);
+    if (!debt.name || oldDefaultNames.has(debt.name)) {
+      debt.name = nextConfig.defaultName;
+    }
+    if (debt.rate === previousConfig.defaultRate) {
+      debt.rate = nextConfig.defaultRate;
+    }
+    return true;
+  }
+
   if (field === "name") {
     debt.name = input.value.trim() || "Unnamed debt";
     return;
   }
 
+  if (field === "status") {
+    debt.status = input.value;
+    return true;
+  }
+
   const value = Number(input.value);
   debt[field] = Number.isFinite(value) ? Math.max(value, 0) : 0;
+  return false;
 }
 
 function sortForStrategy(items, strategy) {
@@ -357,14 +534,18 @@ function buildDiagnosis({ dti, breathingRoom, strategy, payoff, highInterestTota
 function updatePriorityList(activeDebts, strategy) {
   const ordered = sortForStrategy(activeDebts, strategy);
   priorityListEl.innerHTML = ordered
-    .map(
-      (debt) => `
+    .map((debt) => {
+      const config = debtTypeConfig(debt.type);
+      const status = statusConfig(debt.status);
+      const rateText = debt.rate > 0 ? `${debt.rate}% rate` : config.structure;
+      return `
         <li>
-          ${debt.name}
-          <span>${formatRM(debt.balance)} balance · ${debt.rate}% rate · ${formatRM(debt.minPayment)} minimum</span>
+          ${escapeHtml(debt.name)}
+          <span>${escapeHtml(config.label)} · ${formatRM(debt.balance)} balance · ${escapeHtml(rateText)} · ${formatRM(debt.minPayment)} monthly · ${escapeHtml(status.label)}</span>
+          <small>${escapeHtml(status.note)}</small>
         </li>
-      `,
-    )
+      `;
+    })
     .join("");
 
   if (!ordered.length) {
@@ -479,24 +660,30 @@ function updateCalculator() {
 function addDebt() {
   debts.push({
     id: crypto.randomUUID(),
+    type: "other",
     name: "New debt",
     balance: 0,
     rate: 0,
     minPayment: 0,
+    status: "notSure",
   });
   renderRows();
   updateCalculator();
 }
 
-formEl.addEventListener("input", (event) => {
+function handleFormFieldChange(event) {
   if (event.target.id === "extra-payment") {
     document.querySelector('input[name="repayment-mode"][value="custom"]').checked = true;
   }
   if (event.target.matches("[data-field]")) {
-    syncDebtFromInput(event.target);
+    const shouldRenderRows = syncDebtFromInput(event.target);
+    if (shouldRenderRows) renderRows();
   }
   updateCalculator();
-});
+}
+
+formEl.addEventListener("input", handleFormFieldChange);
+formEl.addEventListener("change", handleFormFieldChange);
 
 rowsEl.addEventListener("click", (event) => {
   const button = event.target.closest(".remove-debt");

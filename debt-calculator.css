@@ -659,30 +659,65 @@ input {
 
 .debt-table-wrap {
   width: 100%;
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .debt-table {
   width: 100%;
-  min-width: 720px;
+  min-width: 0;
   border-collapse: collapse;
 }
 
-.debt-table th {
-  padding: 10px 8px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 900;
-  text-align: left;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.debt-table thead {
+  display: none;
+}
+
+.debt-table,
+.debt-table tbody,
+.debt-table tr,
+.debt-table td {
+  display: block;
+  width: 100%;
+}
+
+.debt-table tbody {
+  display: grid;
+  gap: 12px;
+}
+
+.debt-table tr {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(17, 19, 24, 0.1);
+  border-radius: 8px;
+  background: var(--surface);
 }
 
 .debt-table td {
-  padding: 7px 8px;
-  border-top: 1px solid rgba(17, 19, 24, 0.08);
+  padding: 0;
+  border-top: 0;
 }
 
+.debt-table td::before {
+  content: attr(data-label);
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.debt-table td:first-child,
+.debt-table td:last-child {
+  grid-column: 1 / -1;
+}
+
+.debt-type-select,
+.status-select,
 .debt-name,
 .table-input input,
 .rate-field input {
@@ -691,12 +726,46 @@ input {
   font-weight: 800;
 }
 
-.debt-name {
+.debt-type-select,
+.status-select {
+  width: 100%;
   min-height: 44px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--surface);
   color: var(--ink);
+}
+
+.debt-name {
+  width: 100%;
+  margin-top: 8px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.debt-status-inline {
+  margin-top: 8px;
+}
+
+.debt-helper,
+.field-hint {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.debt-helper strong {
+  display: block;
+  color: var(--blue);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .remove-debt {
@@ -878,6 +947,15 @@ input {
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
+}
+
+.priority-list small {
+  display: block;
+  margin-top: 6px;
+  color: var(--blue);
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 800;
 }
 
 .payoff-bars {
