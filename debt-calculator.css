@@ -367,7 +367,8 @@ input {
 }
 
 .expense-breakdown,
-.extra-guidance {
+.extra-guidance,
+.buffer-question {
   border: 1px solid rgba(17, 19, 24, 0.1);
   border-radius: 8px;
   background: var(--surface);
@@ -461,7 +462,7 @@ input {
 
 .extra-guidance {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   align-items: center;
   padding: 16px;
@@ -482,6 +483,34 @@ input {
 
 .extra-guidance.danger {
   background: var(--red-soft);
+}
+
+.buffer-question {
+  display: grid;
+  gap: 7px;
+  padding: 14px 16px;
+  background: rgba(17, 19, 24, 0.03);
+}
+
+.buffer-question span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.buffer-question strong {
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.buffer-question p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .strategy-fieldset,
@@ -563,7 +592,7 @@ input {
 .comfort-options span {
   display: grid;
   gap: 7px;
-  min-height: 116px;
+  min-height: 168px;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -572,8 +601,23 @@ input {
 }
 
 .comfort-options strong {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
   color: var(--ink);
   font-size: 15px;
+}
+
+.comfort-options mark {
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .comfort-options em {
@@ -585,6 +629,13 @@ input {
 }
 
 .comfort-options small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.comfort-options b {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.35;

@@ -220,8 +220,8 @@
                 <div class="step-heading">
                   <span>Step 4</span>
                   <div>
-                    <h3 id="comfort-step-title">Choose your repayment comfort</h3>
-                    <p>The calculator suggests options after checking your available cash.</p>
+                    <h3 id="comfort-step-title">Choose your monthly buffer</h3>
+                    <p>Decide how much breathing room to keep before committing extra money to debt.</p>
                   </div>
                 </div>
 
@@ -234,36 +234,58 @@
                     <span>Selected extra debt payment</span>
                     <strong id="selected-extra-payment">RM0</strong>
                   </div>
+                  <div>
+                    <span>Monthly buffer after this choice</span>
+                    <strong id="selected-buffer-left">RM0</strong>
+                  </div>
                   <p id="extra-payment-guidance">
                     Minimum debt payments are calculated from the debt list above.
                   </p>
                 </section>
 
+                <section class="buffer-question" aria-label="Monthly buffer guidance">
+                  <span>Guide question</span>
+                  <strong>If something unexpected happens this month, how much cash do you still want left?</strong>
+                  <p id="buffer-recommendation">The calculator will recommend a buffer style after reading your cash flow.</p>
+                </section>
+
                 <fieldset class="comfort-fieldset">
-                  <legend>Repayment comfort mode</legend>
+                  <legend>Choose how much breathing room to keep</legend>
                   <div class="comfort-options">
                     <label>
                       <input type="radio" name="repayment-mode" value="conservative" />
                       <span>
-                        <strong>Conservative</strong>
+                        <strong>
+                          Conservative
+                          <mark data-recommendation="conservative">Recommended</mark>
+                        </strong>
                         <em id="conservative-extra">RM0 extra</em>
                         <small id="conservative-buffer">Keeps more buffer</small>
+                        <b>Best for unstable income, family commitments, or emergency worries.</b>
                       </span>
                     </label>
                     <label>
                       <input type="radio" name="repayment-mode" value="balanced" checked />
                       <span>
-                        <strong>Balanced</strong>
+                        <strong>
+                          Balanced
+                          <mark data-recommendation="balanced">Recommended</mark>
+                        </strong>
                         <em id="balanced-extra">RM0 extra</em>
                         <small id="balanced-buffer">Keeps some breathing room</small>
+                        <b>Best for steady progress while keeping monthly breathing room.</b>
                       </span>
                     </label>
                     <label>
                       <input type="radio" name="repayment-mode" value="aggressive" />
                       <span>
-                        <strong>Aggressive</strong>
+                        <strong>
+                          Aggressive
+                          <mark data-recommendation="aggressive">Recommended</mark>
+                        </strong>
                         <em id="aggressive-extra">RM0 extra</em>
                         <small id="aggressive-buffer">Fastest, least buffer</small>
+                        <b>Best only if income is stable and no urgent bills are coming.</b>
                       </span>
                     </label>
                     <label>
@@ -283,7 +305,7 @@
                     <span>RM</span>
                     <input id="extra-payment" type="number" min="0" step="25" value="0" />
                   </div>
-                  <small>Leave as RM0 if unsure. Choosing Conservative, Balanced, or Aggressive will fill this for you.</small>
+                  <small>Use this only if you already know the exact extra amount. The buffer options above will fill this automatically.</small>
                 </label>
               </section>
 

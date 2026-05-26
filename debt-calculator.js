@@ -14,8 +14,10 @@ const expenseBreakdownTotalEl = document.querySelector("#expense-breakdown-total
 const useExpenseBreakdownButton = document.querySelector("#use-expense-breakdown");
 const availableAfterMinimumsEl = document.querySelector("#available-after-minimums");
 const selectedExtraPaymentEl = document.querySelector("#selected-extra-payment");
+const selectedBufferLeftEl = document.querySelector("#selected-buffer-left");
 const extraPaymentGuidanceEl = document.querySelector("#extra-payment-guidance");
 const extraGuidanceEl = document.querySelector(".extra-guidance");
+const bufferRecommendationEl = document.querySelector("#buffer-recommendation");
 const scoreEl = document.querySelector("#health-score");
 const scoreRingEl = document.querySelector(".score-ring");
 const statusLineEl = document.querySelector("#status-line");
@@ -101,6 +103,31 @@ function repaymentOptions(availableAfterMinimums) {
   };
 }
 
+function getBufferRecommendation(availableAfterMinimums, income) {
+  if (availableAfterMinimums <= 0) {
+    return {
+      mode: "conservative",
+      label: "No extra payment yet",
+      copy: "Your minimum commitments already use up the available cash. Keep extra repayment at RM0 until cash flow is positive.",
+    };
+  }
+
+  const availableRatio = income > 0 ? availableAfterMinimums / income : 0;
+  if (availableAfterMinimums < 300 || availableRatio < 0.08) {
+    return {
+      mode: "conservative",
+      label: "Conservative recommended",
+      copy: "Your spare cash is thin, so keep a bigger buffer and avoid creating new debt from one unexpected bill.",
+    };
+  }
+
+  return {
+    mode: "balanced",
+    label: "Balanced recommended",
+    copy: "This gives steady debt progress while still keeping a monthly buffer for normal surprises.",
+  };
+}
+
 function updateComfortOptions(options, availableAfterMinimums) {
   const available = Math.max(0, availableAfterMinimums);
   [
@@ -111,7 +138,14 @@ function updateComfortOptions(options, availableAfterMinimums) {
     const extra = options[key].extra;
     const buffer = Math.max(0, available - extra);
     document.querySelector(`#${key}-extra`).textContent = `${formatRM(extra)} extra`;
-    document.querySelector(`#${key}-buffer`).textContent = `${formatRM(buffer)} buffer left`;
+    document.querySelector(`#${key}-buffer`).textContent = `Keeps ${formatRM(buffer)} buffer left`;
+  });
+}
+
+function updateBufferRecommendation(recommendation) {
+  bufferRecommendationEl.textContent = `${recommendation.label}: ${recommendation.copy}`;
+  document.querySelectorAll("[data-recommendation]").forEach((badge) => {
+    badge.hidden = badge.dataset.recommendation !== recommendation.mode;
   });
 }
 
@@ -371,6 +405,7 @@ function updateCalculator() {
   const availableAfterMinimums = income - expenses - minPayments;
   const options = repaymentOptions(availableAfterMinimums);
   updateComfortOptions(options, availableAfterMinimums);
+  updateBufferRecommendation(getBufferRecommendation(availableAfterMinimums, income));
   let extraPayment = numberValue("#extra-payment");
   if (repaymentMode !== "custom") {
     extraPayment = options[repaymentMode].extra;
@@ -400,6 +435,7 @@ function updateCalculator() {
   interestPaidEl.textContent = payoff.stalled ? "Review needed" : formatRM(payoff.totalInterest);
   availableAfterMinimumsEl.textContent = formatRM(availableAfterMinimums);
   selectedExtraPaymentEl.textContent = formatRM(extraPayment);
+  selectedBufferLeftEl.textContent = formatRM(breathingRoom);
   extraGuidanceEl.classList.toggle("warning", availableAfterMinimums >= 0 && breathingRoom < 0);
   extraGuidanceEl.classList.toggle("danger", availableAfterMinimums < 0);
   if (availableAfterMinimums < 0) {
@@ -413,10 +449,10 @@ function updateCalculator() {
       "Custom is set to RM0. That is acceptable if you are unsure or need to protect your monthly buffer.";
   } else if (repaymentMode === "aggressive") {
     extraPaymentGuidanceEl.textContent =
-      "Aggressive repayment clears debt faster but leaves less monthly buffer. Use this only if your expenses are stable.";
+      "Aggressive repayment clears debt faster but leaves less monthly buffer. Use this only if income is stable and no urgent bills are coming.";
   } else if (repaymentMode === "conservative") {
     extraPaymentGuidanceEl.textContent =
-      "Conservative repayment keeps more monthly buffer while still paying extra toward debt.";
+      "Conservative repayment keeps a bigger monthly buffer and lowers the chance of needing new debt.";
   } else {
     extraPaymentGuidanceEl.textContent =
       "Balanced repayment uses about half of your available cash for debt and keeps the rest as breathing room.";
